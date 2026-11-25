@@ -6,8 +6,11 @@ export const TEST_EMAIL = "test@example.com";
 export const TEST_PASSWORD = "test-password-123";
 
 export async function signInAsTestUser(context: BrowserContext, baseURL: string) {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !key) {
+    throw new Error("Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY (see README tests section)");
+  }
   const pending: { name: string; value: string }[] = [];
 
   // @supabase/ssr hands us the chunked cookies it would set in a browser.
@@ -26,4 +29,5 @@ export async function signInAsTestUser(context: BrowserContext, baseURL: string)
   if (error) throw error;
 
   await context.addCookies(pending.map((c) => ({ ...c, url: baseURL })));
+  return pending;
 }
