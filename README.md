@@ -42,11 +42,15 @@ Requirements: Node.js 24 and Docker (Docker Desktop on Windows and macOS).
    ```
    `npx supabase status` prints the local API URL, the publishable key and the Studio URL.
 3. Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from `npx supabase status`.
-4. For local Google sign-in, set `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and `SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET` in `supabase/.env` (git-ignored) or in your shell, then restart Supabase with `npx supabase stop` and `npx supabase start`. `supabase/config.jsonc` reads them from there. The email provider is enabled locally so Playwright can sign in a seeded test user. The hosted project uses Google only.
-5. Start the app at http://localhost:3000:
+4. For local Google sign-in, set `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and `SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET` in `supabase/.env` (git-ignored) or in your shell, then restart Supabase with `npx supabase stop` and `npx supabase start`. `supabase/config.jsonc` reads them from there. The Google OAuth client must list `http://127.0.0.1:54321/auth/v1/callback` as an authorized redirect URI. The email provider is enabled locally so Playwright can sign in a seeded test user. The hosted project uses Google only.
+5. Start the app and open it at http://127.0.0.1:3000 (not `localhost`: local Supabase Auth only redirects back to its `site_url`, which is `127.0.0.1`):
    ```sh
    npm run dev
    ```
+
+### Sign-in
+
+Signed-out users are sent to `/login`, which has a "Logi sisse Google'iga" button. Google returns to `/auth/callback`, which exchanges the code for a session and opens `/`. `proxy.ts` refreshes the session on every request and verifies it with `getClaims()`. The "Logi välja" button on `/` signs out and returns to `/login`.
 
 Never commit `.env.local`, `supabase/.env` or any secret value. `.env.example` holds variable names only.
 
