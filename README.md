@@ -85,7 +85,15 @@ npm run test:e2e
 
 `supabase/seed.sql` creates a local test user (`test@example.com`, local only). `e2e/auth.ts` signs it in through the local Supabase API and sets the session cookies, so the app needs no password sign-in UI.
 
-Test results (smoke test and database setup test passing) will be listed here as more tests land.
+### Database
+
+`supabase/migrations` creates `choreographies` and `scenes` with CHECK constraints, RLS (owners only, no `anon` access) and the multi-row functions `create_choreography`, `reorder_scenes`, `delete_scene`, `add_dancer` and `delete_dancer`. Regenerate the TypeScript types after a schema change:
+
+```powershell
+npx supabase gen types typescript --local > lib/supabase/database.types.ts
+```
+
+Test results: the pgTAP suite (`supabase/tests/choreographies.test.sql`, 53 tests covering RLS, constraints, `updated_at` and the functions) and the smoke test pass. More results will be listed here as more tests land.
 
 ## Team
 
