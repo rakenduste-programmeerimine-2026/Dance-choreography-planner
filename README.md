@@ -24,7 +24,42 @@ A user creates a choreography of several scenes, sets the dancers' movement path
 
 ## Setup
 
-To be added in #2 (local development) and #6 (deployment).
+Deployment is added in #6.
+
+### Local development
+
+Stack: Next.js (App Router, TypeScript strict, Tailwind), Supabase (Postgres, Auth), Vitest, Playwright.
+
+Requirements: Node.js 24 and Docker (Docker Desktop on Windows and macOS).
+
+1. Install dependencies:
+   ```sh
+   npm install
+   ```
+2. Start local Supabase (Postgres, Auth and Studio in Docker):
+   ```sh
+   npx supabase start
+   ```
+   `npx supabase status` prints the local API URL, the publishable key and the Studio URL.
+3. Copy `.env.example` to `.env.local` and set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` from `npx supabase status`.
+4. For local Google sign-in, set `SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID` and `SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET` in `supabase/.env` (git-ignored) or in your shell, then restart Supabase with `npx supabase stop` and `npx supabase start`. `supabase/config.jsonc` reads them from there. The email provider is enabled locally so Playwright can sign in a seeded test user. The hosted project uses Google only.
+5. Start the app at http://localhost:3000:
+   ```sh
+   npm run dev
+   ```
+
+Never commit `.env.local`, `supabase/.env` or any secret value. `.env.example` holds variable names only.
+
+### Scripts
+
+| Script | What it runs |
+|---|---|
+| `npm run dev` | Next.js dev server |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | Next.js route type generation, then `tsc --noEmit` |
+| `npm test` | Vitest unit tests |
+| `npm run test:e2e` | Playwright end-to-end tests |
+| `npm run test:db` | pgTAP database tests (`supabase test db`, needs local Supabase running) |
 
 ## Team
 
