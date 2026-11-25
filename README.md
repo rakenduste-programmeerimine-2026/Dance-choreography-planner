@@ -65,6 +65,32 @@ Never commit `.env.local`, `supabase/.env` or any secret value. `.env.example` h
 | `npm run test:e2e` | Playwright end-to-end tests |
 | `npm run test:db` | pgTAP database tests (`supabase test db`, needs local Supabase running) |
 
+## Tests
+
+CI (`.github/workflows/ci.yml`) runs on every PR and on pushes to main: lint, typecheck, Vitest, pgTAP against a local Supabase (`supabase start`, `supabase test db`) and Playwright against a built app. It needs no secrets and no Google env vars.
+
+To run the same checks locally, start Supabase (`npx supabase start`), then:
+
+```sh
+npm run lint
+npm run typecheck
+npm test
+npm run test:db
+npx playwright install chromium   # once
+```
+
+Playwright reads the Supabase URL and key from the environment. In PowerShell:
+
+```powershell
+$env:NEXT_PUBLIC_SUPABASE_URL = "http://127.0.0.1:54321"
+$env:NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "<PUBLISHABLE_KEY from npx supabase status>"
+npm run test:e2e
+```
+
+`supabase/seed.sql` creates a local test user (`test@example.com`, local only). `e2e/auth.ts` signs it in through the local Supabase API and sets the session cookies, so the app needs no password sign-in UI.
+
+Test results (smoke test and database setup test passing) will be listed here as more tests land.
+
 ## Team
 
 | Member | GitHub | Role |
