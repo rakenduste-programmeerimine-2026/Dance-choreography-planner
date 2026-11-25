@@ -14,7 +14,7 @@ export async function proxy(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet, headers) {
           // Refreshed tokens must reach both the page render (request) and the browser (response).
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
@@ -22,6 +22,10 @@ export async function proxy(request: NextRequest) {
           response = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
             response.cookies.set(name, value, options),
+          );
+          // No-cache headers stop a CDN from serving one user's Set-Cookie to another.
+          Object.entries(headers).forEach(([key, value]) =>
+            response.headers.set(key, value),
           );
         },
       },
@@ -37,6 +41,10 @@ export async function proxy(request: NextRequest) {
     url.search = "";
     const redirect = NextResponse.redirect(url);
     response.cookies.getAll().forEach((cookie) => redirect.cookies.set(cookie));
+    ["cache-control", "expires", "pragma"].forEach((key) => {
+      const value = response.headers.get(key);
+      if (value) redirect.headers.set(key, value);
+    });
     return redirect;
   }
 
