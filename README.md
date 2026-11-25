@@ -28,7 +28,13 @@ The app runs locally against a local Supabase (see "Local development") and is d
 
 ### Deployment
 
-Hosting: Vercel for the app, a hosted Supabase project (free tier, EU region) for Postgres and Auth. Tanel Metshein (W1ttyRat) owns both. Agents and CI never change hosted settings or data; the steps below are done by humans.
+Hosting: Vercel for the app, a hosted Supabase project (free tier, EU region) for Postgres and Auth. The Vercel project belongs to Tanel Metshein (W1ttyRat). The Supabase project `tantsukava` (West EU, Ireland) lives in the "argoluur's tp" organization. Production URL: https://dance-choreography-planner.vercel.app. Agents and CI never change hosted data; the steps below are done by humans.
+
+The Vercel GitHub app is not installed on the course organization, so Vercel deploys from a fork, `W1ttyRat/Dance-choreography-planner`, not from the organization repo. After each merge to main in the organization repo, sync the fork so production updates:
+
+```sh
+gh repo sync W1ttyRat/Dance-choreography-planner
+```
 
 Environment variables (names only, set in the Vercel project settings for Production and Preview):
 
@@ -42,7 +48,7 @@ The Google client ID and secret are not Vercel variables. They are set in the Su
 One-time setup, in this order:
 
 1. **Supabase project (Tanel).** Create a project in an EU region. Link it locally with `npx supabase link --project-ref <ref>`.
-2. **Vercel project (Tanel).** Import the GitHub repo, keep the Next.js defaults, add the two variables above. Note the production URL.
+2. **Vercel project (Tanel).** Fork the repo to your own GitHub account, give the Vercel GitHub app access to the fork, import it, keep the Next.js defaults and add the two variables above. Note the production URL.
 3. **Google sign-in (Tanel).**
    - In Google Cloud, create an OAuth client (Web application). Add `https://<project-ref>.supabase.co/auth/v1/callback` as an authorized redirect URI.
    - Set the OAuth consent screen publishing status to "In production", so any Google account can sign in.
