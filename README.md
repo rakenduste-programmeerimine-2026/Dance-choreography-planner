@@ -24,7 +24,44 @@ A user creates a choreography of several scenes, sets the dancers' movement path
 
 ## Setup
 
-Deployment is added in #6.
+The app runs locally against a local Supabase (see "Local development") and is deployed to Vercel against a hosted Supabase project (see "Deployment").
+
+### Deployment
+
+Hosting: Vercel for the app, a hosted Supabase project (free tier, EU region) for Postgres and Auth. Tanel Metshein (W1ttyRat) owns both. Agents and CI never change hosted settings or data; the steps below are done by humans.
+
+Environment variables (names only, set in the Vercel project settings for Production and Preview):
+
+| Variable | Value |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Project URL from the hosted Supabase dashboard (Project Settings, API) |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable key from the same page |
+
+The Google client ID and secret are not Vercel variables. They are set in the Supabase dashboard (step 3).
+
+One-time setup, in this order:
+
+1. **Supabase project (Tanel).** Create a project in an EU region. Link it locally with `npx supabase link --project-ref <ref>`.
+2. **Vercel project (Tanel).** Import the GitHub repo, keep the Next.js defaults, add the two variables above. Note the production URL.
+3. **Google sign-in (Tanel).**
+   - In Google Cloud, create an OAuth client (Web application). Add `https://<project-ref>.supabase.co/auth/v1/callback` as an authorized redirect URI.
+   - Set the OAuth consent screen publishing status to "In production", so any Google account can sign in.
+   - In the Supabase dashboard, Authentication, Providers, enable Google and paste the client ID and secret.
+4. **Supabase redirect URLs (Tanel).** In Authentication, URL Configuration, set Site URL to the production URL and add Redirect URLs `https://<production-domain>/**` and a Vercel preview wildcard, `https://*-<vercel-team-slug>.vercel.app/**`. Check the exact preview URL pattern in the Vercel dashboard.
+5. **First migration push.** After the database PR is merged to main, run `npx supabase db push` (see below).
+6. **Verify.** Open the production URL, sign in with Google and check that `/` loads with your name. Then open a Vercel preview URL and sign in there too.
+
+#### Migrations
+
+Migrations live in `supabase/migrations` and are the only way to change the schema, never Studio. After each migration PR is merged to main, Tanel runs from an up-to-date main:
+
+```sh
+npx supabase db push
+```
+
+`db push` changes the hosted database, so run it only after the team approves the merged PR. It is not automated in CI.
+
+Migrations are additive only: add tables, columns, constraints and functions, but never drop or rename anything. Older Vercel previews share the hosted database, so a destructive migration would break them. To retire a column, stop using it in code and leave it in the database.
 
 ### Local development
 
