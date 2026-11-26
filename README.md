@@ -101,6 +101,10 @@ Never commit `.env.local`, `supabase/.env` or any secret value. `.env.example` h
 
 `/` lists the signed-in user's choreographies and has a form to create one (title 1–100 characters, stage width and depth 1–50 m, default 10 × 8; creating also creates "Stseen 1" through `create_choreography`). Each item can be renamed and resized under "Muuda" (the note "Mõõtude muutmine venitab paigutust" is shown) and deleted after a `confirm()`. The list is read per request through the user's session and RLS, never from a shared cache. Server Actions in `app/choreographies/actions.ts` check the session and validate input with the type guards in `lib/choreography-input.ts` before writing.
 
+### Dancers
+
+Each title in the list opens `/choreographies/[id]`. Its dancer panel adds a dancer (next unused number as label, gender `naine`, at the first free slot of a 6×5 grid in the shown scene, at the same spot in every scene; disabled at 30), edits the label (1–3 characters, unique ignoring case, saved on blur or Enter) and the gender, and deletes a dancer from every scene after a `confirm()`. Add and delete go through `add_dancer` and `delete_dancer`, so every scene changes or none. The page shows "Salvestatud", "Salvestan…" or "Salvestamine ebaõnnestus" with "Proovi uuesti", which resends the latest change. The shown scene is the `scene` search param (`/choreographies/[id]?scene=<scene id>`), falling back to the first scene. Gender colors are the theme colors `mees` (`blue-600`) and `naine` (`pink-500`) in `app/globals.css`, used as `bg-mees`, `fill-naine` and so on. The dancer type guards are in `lib/dancers.ts`.
+
 ### Scripts
 
 | Script | What it runs |
