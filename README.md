@@ -97,6 +97,10 @@ Signed-out users are sent to `/login`, which has a "Logi sisse Google'iga" butto
 
 Never commit `.env.local`, `supabase/.env` or any secret value. `.env.example` holds variable names only.
 
+### Choreographies
+
+`/` lists the signed-in user's choreographies and has a form to create one (title 1–100 characters, stage width and depth 1–50 m, default 10 × 8; creating also creates "Stseen 1" through `create_choreography`). Each item can be renamed and resized under "Muuda" (the note "Mõõtude muutmine venitab paigutust" is shown) and deleted after a `confirm()`. The list is read per request through the user's session and RLS, never from a shared cache. Server Actions in `app/choreographies/actions.ts` check the session and validate input with the type guards in `lib/choreography-input.ts` before writing.
+
 ### Scripts
 
 | Script | What it runs |
@@ -140,7 +144,7 @@ npm run test:e2e
 npx supabase gen types typescript --local > lib/supabase/database.types.ts
 ```
 
-Test results: the pgTAP suite (`supabase/tests/choreographies.test.sql`, 53 tests covering RLS, constraints, `updated_at` and the functions) and the smoke test pass. More results will be listed here as more tests land.
+Test results: the pgTAP suite (`supabase/tests/choreographies.test.sql`, 53 tests covering RLS, constraints, `updated_at` and the functions) and the smoke test pass. Vitest: 5 tests for the choreography input guards (`lib/choreography-input.test.ts`) pass. More results will be listed here as more tests land.
 
 ## Team
 
