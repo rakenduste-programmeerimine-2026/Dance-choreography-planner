@@ -12,6 +12,7 @@ type Props = {
 
 export function ChoreographyForm({ action, submitLabel, initial, showResizeNote }: Props) {
   const [state, formAction, pending] = useActionState(action, {});
+  const values = state.values;
   const input = "rounded border border-slate-300 px-2 py-1";
 
   return (
@@ -19,15 +20,15 @@ export function ChoreographyForm({ action, submitLabel, initial, showResizeNote 
       {initial && <input type="hidden" name="id" value={initial.id} />}
       <label className="flex flex-col text-sm">
         Pealkiri
-        <input name="title" required maxLength={100} defaultValue={initial?.title} className={input} />
+        <input name="title" required maxLength={100} defaultValue={values?.title ?? initial?.title} className={input} />
       </label>
       <label className="flex flex-col text-sm">
         Laius (m)
-        <input name="width" type="number" required min={1} max={50} step="any" defaultValue={initial?.width ?? 10} className={`${input} w-24`} />
+        <input name="width" type="number" required min={1} max={50} step="any" defaultValue={values?.width ?? initial?.width ?? 10} className={`${input} w-24`} />
       </label>
       <label className="flex flex-col text-sm">
         Sügavus (m)
-        <input name="depth" type="number" required min={1} max={50} step="any" defaultValue={initial?.depth ?? 8} className={`${input} w-24`} />
+        <input name="depth" type="number" required min={1} max={50} step="any" defaultValue={values?.depth ?? initial?.depth ?? 8} className={`${input} w-24`} />
       </label>
       <button type="submit" disabled={pending} className="rounded-full border border-slate-300 px-4 py-1.5 font-medium hover:bg-slate-100 disabled:opacity-50">
         {submitLabel}
