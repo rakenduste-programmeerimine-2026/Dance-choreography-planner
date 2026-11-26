@@ -1,3 +1,4 @@
+import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { updateChoreography } from "./actions";
 import { ChoreographyForm } from "./choreography-form";
@@ -5,6 +6,8 @@ import { DeleteButton } from "./delete-button";
 
 // Reads cookies through the Supabase client, so it is rendered per request and never cached.
 export async function ChoreographyList() {
+  // The Supabase client reads the clock while loading the session, which cannot happen during prerender.
+  await connection();
   const supabase = await createClient();
   // RLS returns only the signed-in user's rows.
   const { data, error } = await supabase
