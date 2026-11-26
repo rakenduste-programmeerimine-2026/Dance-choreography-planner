@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { connection } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { updateChoreography } from "./actions";
@@ -24,7 +25,9 @@ export async function ChoreographyList() {
         <li key={c.id} className="rounded border border-slate-300 p-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="text-lg font-medium">{c.title}</h3>
+              <h3 className="text-lg font-medium">
+                <Link href={`/choreographies/${c.id}`} className="hover:underline">{c.title}</Link>
+              </h3>
               <p className="text-sm text-slate-600">{c.stage_width_m} × {c.stage_depth_m} m</p>
             </div>
             <DeleteButton id={c.id} title={c.title} />

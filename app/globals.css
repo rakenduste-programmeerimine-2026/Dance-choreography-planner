@@ -10,6 +10,9 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  /* Dancer colors by gender, used as bg-mees / fill-naine etc. everywhere a dancer is drawn */
+  --color-mees: var(--color-blue-600);
+  --color-naine: var(--color-pink-500);
 }
 
 @media (prefers-color-scheme: dark) {
